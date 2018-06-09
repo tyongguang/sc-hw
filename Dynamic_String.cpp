@@ -1,25 +1,26 @@
 #include "Dynamic_String.h"
 #include <iostream>
 
-Dynamic_String::Dynamic_String(){}
-    
-Dynamic_String::Dynamic_String(std::string _s) : s(_s) {}
 
-Dynamic_String::~Dynamic_String() {
-	// std::cout << "in Dynamic_String destructor" << std::endl;
+
+Dynamic_String::Dynamic_String(const char * s) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    value_ = s;
 }
 
-void Dynamic_String::set(const std::string& val) {
-    std::lock_guard<std::mutex> lock(str_mutex);
-    s = val;
+std::string Dynamic_String::str() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return "\"" + value_ + "\"";
 }
 
-std::string Dynamic_String::get_str() {
-    std::lock_guard<std::mutex> lock(str_mutex);
-    return s;
+Generic_Value* Dynamic_String::clone() const {
+    auto p = new Dynamic_String();
+    p->value_ = this->value_;
+    return p;
 }
 
-std::string Dynamic_String::to_string() {
-    std::lock_guard<std::mutex> lock(str_mutex);
-    return s;
+Generic_Value * Dynamic_String::move_clone() {
+    auto p = new Dynamic_String();
+    p->value_ = std::move(this->value_);
+    return p;
 }

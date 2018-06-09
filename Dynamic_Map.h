@@ -8,20 +8,20 @@
 class Dynamic_Map : public Generic_Value {
 public:
     Dynamic_Map();    
-
     ~Dynamic_Map();
-
-    void insert(const std::string& key, Generic_Value *val);
-
+    Dynamic_Map(const Dynamic_Map& m);
+    Dynamic_Map(Dynamic_Map&& m);
+    void insert(const std::string& key, const Generic_Value& val);
+    void insert(const std::string& key, Generic_Value&& val);
     void erase(const std::string& key);
+    Generic_Value& get(const std::string& key);
 
-    Generic_Value *get(const std::string& key);
-
-    virtual std::string to_string();
-    
+    virtual std::string str() override;
+    virtual Generic_Value* clone() const override;
+    virtual Generic_Value* move_clone() override;
 private:
-    std::map<std::string, Generic_Value *> m;
-    std::mutex map_mutex;
+    std::map<std::string, Generic_Value *> m_;
+    std::mutex mutex_;
 };
 
 #endif /* _DYNAMIC_MAP_H_ */
