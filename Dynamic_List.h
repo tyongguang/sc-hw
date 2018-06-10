@@ -17,6 +17,7 @@ public:
     Generic_Value& push_back(Generic_Value&& val);
     void pop_back();
     Generic_Value& back();
+    size_t size();
 
     virtual std::string str() override;
     virtual Generic_Value* clone() const override;

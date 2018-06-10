@@ -11,7 +11,7 @@ Dynamic_List::Dynamic_List(const Dynamic_List& lst) {
 }
 
 Dynamic_List::Dynamic_List(Dynamic_List&& lst) 
-    : lst_(lst.lst_) {
+    : lst_(std::forward<std::list<Generic_Value *> >(lst.lst_)) {
 }
 
 Dynamic_List& Dynamic_List::operator=(const Dynamic_List& src) {
@@ -70,7 +70,7 @@ std::string Dynamic_List::str() {
     if (lst_.size() > 0) {
         ss << lst_.front()->str();
         for (auto iter = ++lst_.begin(); iter != lst_.end(); ++iter) {
-            ss << ", " << (*iter)->str();
+            ss << "," << (*iter)->str();
         }
     }
     ss << "]";
@@ -89,5 +89,10 @@ Generic_Value* Dynamic_List::move_clone() {
     Dynamic_List* p = new Dynamic_List();
     p->lst_ = std::move(this->lst_);
     return p;
+}
+
+size_t Dynamic_List::size() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return lst_.size();
 }
 

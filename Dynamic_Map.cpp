@@ -11,7 +11,7 @@ Dynamic_Map::Dynamic_Map(const Dynamic_Map& m) {
 }
 
 Dynamic_Map::Dynamic_Map(Dynamic_Map&& m)
-    : m_(m.m_) {
+    : m_(std::forward<std::map<std::string, Generic_Value *> >(m.m_)) {
 }
 
 Dynamic_Map::~Dynamic_Map() {
@@ -25,6 +25,11 @@ Generic_Value& Dynamic_Map::insert(const std::string& key,
                         const Generic_Value& val) {
     std::lock_guard<std::mutex> lock(mutex_);
     auto p = val.clone();
+    auto iter = m_.find(key);
+    if (iter != m_.end()) {
+        delete iter->second;
+        m_.erase(iter);
+    }
     m_[key] = p;
     return *p;
 }
@@ -33,6 +38,11 @@ Generic_Value& Dynamic_Map::insert(const std::string& key,
     Generic_Value&& val) {
     std::lock_guard<std::mutex> lock(mutex_);
     auto p = val.move_clone();
+    auto iter = m_.find(key);
+    if (iter != m_.end()) {
+        delete iter->second;
+        m_.erase(iter);
+    }
     m_[key] = p;
     return *p;
 }
@@ -85,4 +95,9 @@ Generic_Value* Dynamic_Map::move_clone() {
     Dynamic_Map* p = new Dynamic_Map();
     p->m_ = std::move(this->m_);
     return p;
+}
+
+size_t Dynamic_Map::size() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return m_.size();
 }

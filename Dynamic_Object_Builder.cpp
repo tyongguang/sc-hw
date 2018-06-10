@@ -20,11 +20,10 @@ Generic_Value* ParseJSONValue(const Json::Value& val) {
     return NULL;
 }
 
-
 void ParseJSONTree(Generic_Value* parent, const Json::Value& root) {
     if (root.isObject()) {
         Dynamic_Map * m = dynamic_cast<Dynamic_Map*>(parent);
-        for (Json::Value::const_iterator itr = root.begin(); itr != root.end(); itr++) {
+        for (Json::Value::const_iterator itr = root.begin(); itr != root.end(); ++itr) {
             if (itr->isObject()) {
                 auto& child = m->insert(itr.key().asCString(), Dynamic_Map());
                 ParseJSONTree(&child, *itr);
@@ -40,7 +39,7 @@ void ParseJSONTree(Generic_Value* parent, const Json::Value& root) {
     }
     else if (root.isArray()) {
         Dynamic_List * lst = dynamic_cast<Dynamic_List*>(parent);
-        for (Json::Value::const_iterator itr = root.begin(); itr != root.end(); itr++) {
+        for (Json::Value::const_iterator itr = root.begin(); itr != root.end(); ++itr) {
             if (itr->isObject()) {
                 auto& child = lst->push_back(Dynamic_Map());
                 ParseJSONTree(&child, *itr);
@@ -57,8 +56,6 @@ void ParseJSONTree(Generic_Value* parent, const Json::Value& root) {
 
 Generic_Value* Dynamic_Object_Builder::build(const std::string& json) {
     Json::Value root;
-   // Json::Reader reader;
-
     Json::CharReaderBuilder builder;
     std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
     std::string errors;

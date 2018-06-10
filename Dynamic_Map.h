@@ -15,6 +15,7 @@ public:
     Generic_Value& insert(const std::string& key, Generic_Value&& val);
     void erase(const std::string& key);
     Generic_Value& get(const std::string& key);
+    size_t size();
 
     virtual std::string str() override;
     virtual Generic_Value* clone() const override;

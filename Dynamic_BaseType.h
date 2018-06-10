@@ -9,7 +9,8 @@
 template<class T>
 class Dynamic_BaseType : public Generic_Value {
 public:
-    Dynamic_BaseType() {
+    Dynamic_BaseType()
+        :value_(T()) {
     }
 
     Dynamic_BaseType(const T& v) 
