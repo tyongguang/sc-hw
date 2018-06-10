@@ -5,7 +5,7 @@
 #include "Dynamic_Map.h"
 #include "Dynamic_Object_Builder.h"
 
-std::string manaul_construct_object_json() {
+std::string manual_construct_object_json() {
     Dynamic_Map my_map;
     Dynamic_Map my_map2;
     Dynamic_List mylist1;
@@ -41,7 +41,7 @@ std::string manaul_construct_object_json() {
 
 int main() {
     try {
-        auto str = manaul_construct_object_json();
+        auto str = manual_construct_object_json();
         std::cout << "original     string:" << str << std::endl << std::endl;
         Dynamic_Object_Builder object_builder;
         std::unique_ptr<Generic_Value> root(object_builder.build(str));

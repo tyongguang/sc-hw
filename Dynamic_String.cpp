@@ -8,7 +8,7 @@ Dynamic_String::Dynamic_String(const char * s) {
 }
 
 Dynamic_String::Dynamic_String(const std::string& s)
-    : Dynamic_BaseType<std::string>(s) {
+    : Dynamic_Base_Type<std::string>(s) {
 }
 
 std::string Dynamic_String::str() {

@@ -7,17 +7,17 @@
 #include <sstream>
 
 template<class T>
-class Dynamic_BaseType : public Generic_Value {
+class Dynamic_Base_Type : public Generic_Value {
 public:
-    Dynamic_BaseType()
+    Dynamic_Base_Type()
         :value_(T()) {
     }
 
-    Dynamic_BaseType(const T& v) 
+    Dynamic_Base_Type(const T& v) 
         : value_(v) {
     }
 
-    ~Dynamic_BaseType() {
+    ~Dynamic_Base_Type() {
     }
 
     virtual void set(const T& val) {
@@ -35,13 +35,13 @@ public:
     }
 
     virtual Generic_Value* clone() const override {
-        auto p = new Dynamic_BaseType<T>();
+        auto p = new Dynamic_Base_Type<T>();
         p->value_ = this->value_;
         return p;
     }
 
     virtual Generic_Value * move_clone() override {
-        auto p = new Dynamic_BaseType<T>();
+        auto p = new Dynamic_Base_Type<T>();
         p->value_ = std::move(this->value_);
         return p;
     }
@@ -50,9 +50,9 @@ protected:
     std::mutex mutex_;
 };
 
-typedef Dynamic_BaseType<int> Dynamic_Int;
-typedef Dynamic_BaseType<short> Dynamic_Short;
-typedef Dynamic_BaseType<double> Dynamic_Double;
-typedef Dynamic_BaseType<float> Dynamic_Float;
+typedef Dynamic_Base_Type<int> Dynamic_Int;
+typedef Dynamic_Base_Type<short> Dynamic_Short;
+typedef Dynamic_Base_Type<double> Dynamic_Double;
+typedef Dynamic_Base_Type<float> Dynamic_Float;
 
 #endif /* _DYNAMIC_BASE_TYPE_H_ */
