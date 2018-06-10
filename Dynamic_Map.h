@@ -11,8 +11,8 @@ public:
     ~Dynamic_Map();
     Dynamic_Map(const Dynamic_Map& m);
     Dynamic_Map(Dynamic_Map&& m);
-    void insert(const std::string& key, const Generic_Value& val);
-    void insert(const std::string& key, Generic_Value&& val);
+    Generic_Value& insert(const std::string& key, const Generic_Value& val);
+    Generic_Value& insert(const std::string& key, Generic_Value&& val);
     void erase(const std::string& key);
     Generic_Value& get(const std::string& key);
 

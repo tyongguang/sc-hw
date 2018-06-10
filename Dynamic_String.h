@@ -8,6 +8,7 @@ class Dynamic_String : public Dynamic_BaseType<std::string> {
 public:
     Dynamic_String() {}
     Dynamic_String(const char * s);
+    Dynamic_String(const std::string& s);
 
     virtual std::string str() override;
     virtual Generic_Value* clone() const override;

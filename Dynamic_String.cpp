@@ -4,8 +4,11 @@
 
 
 Dynamic_String::Dynamic_String(const char * s) {
-    std::lock_guard<std::mutex> lock(mutex_);
     value_ = s;
+}
+
+Dynamic_String::Dynamic_String(const std::string& s)
+    : Dynamic_BaseType<std::string>(s) {
 }
 
 std::string Dynamic_String::str() {

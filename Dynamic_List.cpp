@@ -4,8 +4,10 @@
 Dynamic_List::Dynamic_List() {
 }
 
-Dynamic_List::Dynamic_List(const Dynamic_List& lst)
-    : lst_(lst.lst_) {
+Dynamic_List::Dynamic_List(const Dynamic_List& lst) {
+    for (auto& item : lst.lst_) {
+        lst_.push_back(item->clone());
+    }
 }
 
 Dynamic_List::Dynamic_List(Dynamic_List&& lst) 
@@ -13,12 +15,16 @@ Dynamic_List::Dynamic_List(Dynamic_List&& lst)
 }
 
 Dynamic_List& Dynamic_List::operator=(const Dynamic_List& src) {
-    dynamic_cast<Dynamic_List *>(src.clone())->lst_.swap(lst_);
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::unique_ptr<Generic_Value> p(src.clone());
+    dynamic_cast<Dynamic_List *>(p.get())->lst_.swap(lst_);
     return *this;
 }
 
 Dynamic_List& Dynamic_List::operator=(Dynamic_List&& src) {
-    dynamic_cast<Dynamic_List *>(src.move_clone())->lst_.swap(lst_);
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::unique_ptr<Generic_Value> p(src.move_clone());
+    dynamic_cast<Dynamic_List *>(p.get())->lst_.swap(lst_);
     return *this;
 }
 
@@ -28,18 +34,22 @@ Dynamic_List::~Dynamic_List() {
     }
 }
 
-void Dynamic_List::push_back(const Generic_Value& val) {
-    std::lock_guard<std::mutex> lock(lst_mutex);
-    lst_.push_back(val.clone());
+Generic_Value& Dynamic_List::push_back(const Generic_Value& val) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto p = val.clone();
+    lst_.push_back(p);
+    return *p;
 }
 
-void Dynamic_List::push_back(Generic_Value&& val) {
-    std::lock_guard<std::mutex> lock(lst_mutex);
-    lst_.push_back(val.move_clone());
+Generic_Value& Dynamic_List::push_back(Generic_Value&& val) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto p = val.move_clone();
+    lst_.push_back(p);
+    return *p;
 }
 
 void Dynamic_List::pop_back() {
-    std::lock_guard<std::mutex> lock(lst_mutex);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (lst_.empty()) {
         throw std::runtime_error("The list is empty");
     }
@@ -47,14 +57,14 @@ void Dynamic_List::pop_back() {
 }
 
 Generic_Value& Dynamic_List::back() {
-    std::lock_guard<std::mutex> lock(lst_mutex);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (lst_.empty()) 
         throw std::runtime_error("the list is empty");
     return *lst_.back();
 }
 
 std::string Dynamic_List::str() {
-    std::lock_guard<std::mutex> lock(lst_mutex);
+    std::lock_guard<std::mutex> lock(mutex_);
     std::stringstream ss;
     ss << "[";
     if (lst_.size() > 0) {

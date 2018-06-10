@@ -13,8 +13,8 @@ public:
     Dynamic_List& operator = (const Dynamic_List& src);
     Dynamic_List& operator = (Dynamic_List&& src);
     ~Dynamic_List();
-    void push_back(const Generic_Value& val);
-    void push_back(Generic_Value&& val);
+    Generic_Value& push_back(const Generic_Value& val);
+    Generic_Value& push_back(Generic_Value&& val);
     void pop_back();
     Generic_Value& back();
 
@@ -22,7 +22,7 @@ public:
     virtual Generic_Value* clone() const override;
     virtual Generic_Value* move_clone() override;
 private:
-    std::mutex lst_mutex;
+    std::mutex mutex_;
     std::list<Generic_Value *> lst_;
 };
 

@@ -4,8 +4,10 @@
 Dynamic_Map::Dynamic_Map() {
 }
 
-Dynamic_Map::Dynamic_Map(const Dynamic_Map& m)
-    :m_(m.m_) {
+Dynamic_Map::Dynamic_Map(const Dynamic_Map& m) {
+    for (auto& item : m.m_) {
+        m_[item.first] = item.second->clone();
+    }
 }
 
 Dynamic_Map::Dynamic_Map(Dynamic_Map&& m)
@@ -19,16 +21,20 @@ Dynamic_Map::~Dynamic_Map() {
     m_.clear();
 }
 
-void Dynamic_Map::insert(const std::string& key, 
+Generic_Value& Dynamic_Map::insert(const std::string& key,
                         const Generic_Value& val) {
     std::lock_guard<std::mutex> lock(mutex_);
-    m_[key] = val.clone();
+    auto p = val.clone();
+    m_[key] = p;
+    return *p;
 }
 
-void Dynamic_Map::insert(const std::string& key,
+Generic_Value& Dynamic_Map::insert(const std::string& key,
     Generic_Value&& val) {
     std::lock_guard<std::mutex> lock(mutex_);
-    m_[key] = val.move_clone();
+    auto p = val.move_clone();
+    m_[key] = p;
+    return *p;
 }
 
 void Dynamic_Map::erase(const std::string& key) {
@@ -75,6 +81,7 @@ Generic_Value* Dynamic_Map::clone() const {
 }
 
 Generic_Value* Dynamic_Map::move_clone() {
+    std::lock_guard<std::mutex> lock(mutex_);
     Dynamic_Map* p = new Dynamic_Map();
     p->m_ = std::move(this->m_);
     return p;

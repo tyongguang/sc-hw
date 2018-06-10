@@ -9,21 +9,9 @@ public:
     }
     virtual ~Generic_Value() {
     };
-    virtual std::string str() {
-        return "";
-    }
-
-    virtual std::string getType() {
-        return "";
-    }
-    virtual Generic_Value* clone() const {
-        return  NULL;
-    }
-    virtual Generic_Value * move_clone() {
-        return  NULL;
-    }
-    //virtual Generic_Value& operator = (const Generic_Value& v) = 0;
-    //virtual Generic_Value& operator = (Generic_Value&& v) = 0;
+    virtual std::string str() = 0;
+    virtual Generic_Value* clone() const = 0;
+    virtual Generic_Value * move_clone() = 0;
 };
 
 
